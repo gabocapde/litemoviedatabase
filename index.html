@@ -1,0 +1,680 @@
+<!--Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/-->
+
+<!doctype html>
+<html ng-app="indexConApp">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>Lite Movie Database</title>		
+		<link rel="stylesheet" href="css/bootstrap.css">
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/font-awesome.min.css">
+		<link rel="stylesheet" href="style.css">
+		<link rel="stylesheet" href="css/toastr.css" type="text/css" />
+		
+		<!--web-fonts-->
+		<link href='css/fonts.css' rel='stylesheet' type='text/css'>
+			
+		<!--js-->
+		<script src="js/pouchdb-3.0.6.min.js"></script>
+		<script src="app.js"></script>
+		<script src="app.create.js"></script>
+		<script src="app.functions.js"></script>
+		<script src="app.tablas.js"></script>
+		<script src="js/jquery-1.8.2.min.js"></script>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/jquery.mobile.custom.js"></script>
+		<script src="js/toastr.js"></script>
+		<!--<script src="cordova.js"></script>-->
+			
+		<!--Angular-->
+		<script src="js/angular.min.js"></script>
+		<script type="text/javascript">
+			var app = angular.module('indexConApp', []);
+			app.controller('abMainCtrl', function abMainCtrl($scope)
+			{
+				$scope.buscarPelicula = false;
+				$scope.notas = false;
+				$scope.mostrarImagen = 0;
+				$scope.buscarPeliculaPeriodicamente = false;
+				$scope.tablaPelicula = false;
+				$scope.tablaActor = false;
+				$scope.tablaSerie = false;
+				$scope.tablaLista = false;
+				$scope.tablaOptions = false;
+				$scope.tablaHistory = false;
+				$scope.tablaNothing = false;
+				$scope.inputSearch = false;
+				$scope.carga = true;
+				$scope.intervalID;
+				$scope.texto = '';
+				$scope.language;
+				
+				$scope.showTablaPelicula = function (){
+					if (!$scope.tablaPelicula) $scope.tablaPelicula = true;
+				}
+				$scope.removeTablaPelicula = function (){
+					if ($scope.tablaPelicula) $scope.tablaPelicula = false;
+				}
+
+				$scope.showTablaActor = function (){
+					if (!$scope.tablaActor) $scope.tablaActor = true;
+				}
+				$scope.removeTablaActor = function (){
+					if ($scope.tablaActor) $scope.tablaActor = false;
+				}
+
+				$scope.showTablaSerie = function (){
+					if (!$scope.tablaSerie) $scope.tablaSerie = true;
+				}
+				$scope.removeTablaSerie = function (){
+					if ($scope.tablaSerie) $scope.tablaSerie = false;
+				}
+
+				$scope.showTablaLista = function (){
+					if (!$scope.tablaLista) $scope.tablaLista = true;
+				}
+				$scope.removeTablaLista = function (){
+					if ($scope.tablaLista) $scope.tablaLista = false;
+				}
+
+				$scope.showTablaCarga = function (){
+					if (!$scope.carga) $scope.carga = true;
+				}
+				$scope.removeTablaCarga = function (){
+					if ($scope.carga) $scope.carga = false;
+				}
+
+				$scope.showTablaOptions = function (){
+					if (!$scope.tablaOptions) $scope.tablaOptions = true;
+				}
+				$scope.removeTablaOptions = function (){
+					if ($scope.tablaOptions) $scope.tablaOptions = false;
+				}
+
+				$scope.showTablaHistory = function (){
+					if (!$scope.tablaHistory) $scope.tablaHistory = true;
+				}
+				$scope.removeTablaHistory = function (){
+					if ($scope.tablaHistory) $scope.tablaHistory = false;
+				}
+
+				$scope.showTablaNothing = function (){
+					if (!$scope.tablaNothing) $scope.tablaNothing = true;
+				}
+				$scope.removeTablaNothing = function (){
+					if ($scope.tablaNothing) $scope.tablaNothing = false;
+				}
+
+				$scope.checkTexto = function() {
+					if ($scope.texto.length < 1 || $scope.texto == undefined) { 
+						return false;
+					}else {
+						return true;
+					}
+				};
+
+				$scope.cleanTexto = function() {
+					$scope.texto = '';
+				};
+
+				$scope.showInputSearch = function() {
+					$scope.inputSearch = true;
+				};
+				$scope.hideInputSearch = function() {
+					$scope.inputSearch = false;
+				};
+
+				$scope.showImages = function() {
+					if ($scope.mostrarImagen == 0) { 
+						return true;
+					}else {
+						return false;
+					}
+				};
+				
+			});
+		</script>			
+	</head>
+	<body onload="init();">
+		<div id="abMainCtrl" ng-controller="abMainCtrl">
+			<!--header start here-->
+			 <div class="header">
+				  <div class="wrap">
+						<div class="header-main">
+							<div class="menu">
+								<div class="col-xs-10 col-sm-10 col-md-10 search-header-main" ng-show="!inputSearch" ng-click="showInputSearch()">
+									<i class="fa fa-search"></i>
+								</div>
+								<div class="col-xs-10 col-sm-10 col-md-10 input-header-main" ng-show="inputSearch">
+									<div class="col-xs-1 col-sm-1 col-md-1 no-padd">
+										<i class="fa fa-times" ng-click="cleanTexto();hideInputSearch();"></i>
+									</div>
+									<div class="col-xs-11 col-sm-11 col-md-11 no-padd">
+										<input id="input_search" ng-model="texto" type="text">
+									</div>
+								</div>
+								<div class="col-xs-2 col-sm-2 col-md-2 no-padd">
+									<i class="fa fa-bars menu-bars" onclick="slide_menu()"></i>
+								</div>
+							</div>
+							<div class="clear"> </div>
+						</div>
+				  </div>
+			 </div>
+			
+			
+			
+			
+			
+			
+			<!--CONTENIDO-->
+			<div class="intro_blank"></div>
+			<div class="intro" id="intro">
+				<div class="wrap" >
+				  
+					<div ng-show="tablaActor">
+						<!--TABLA ACTORES-->
+						<div id="tblDataActor" class="intro-main col-xs-12 col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
+							<span class="col-xs-12 col-sm-12 col-md-12 random"></span>
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h3 id="act-tabla-titulo"></h3>
+								<img id="act-tabla-poster" class="poster" />
+								<h2 class="col-xs-12 col-sm-12 col-md-12 no_image"></h2>
+							</div>
+							<!--DETALLES PERSONALES-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 class="primer_titulo" id="personal_details"></h2>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="act-tabla-anio-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="act-tabla-anio"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="act-tabla-causedeath-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="act-tabla-causedeath"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="act-tabla-age-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="act-tabla-age"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="act-tabla-durac-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="act-tabla-durac"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="act-tabla-tagline-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="act-tabla-tagline"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="act-tabla-director-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="act-tabla-director"></p>
+							</div>
+							<div class="b"> </div>
+							<!--BIOGRAFÍA-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="act-tabla-actores-celda"></h2>
+								<p id="act-tabla-actores"></p>
+							</div>
+							<div class="b"> </div>
+							<!--VIDA PERSONAL-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="personal_life"></h2>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="act-tabla-productora-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="act-tabla-productora"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="act-tabla-productores-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="act-tabla-productores"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="act-tabla-exec_productores-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="act-tabla-exec_productores"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="act-tabla-guion-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="act-tabla-guion"></p>
+							</div>
+							<div class="b"> </div>
+							<!--FILMOGRAFIA-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="filmografia"></h2>
+								<h4 id="act-tabla-adapted-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo filmografia" id="act-tabla-adapted"></p>
+								<h4 id="act-tabla-pais-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo filmografia" id="act-tabla-pais"></p>
+							</div>
+							<div class="b"> </div>
+							<!--DETRAS DE CAMARA FILMS-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="detras-de-camara"></h2>
+								<h4 id="act-tabla-idioma-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-idioma"></p>
+								<h4 id="act-tabla-lanzamiento-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-lanzamiento"></p>
+								<h4 id="act-tabla-generos-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-generos"></p>
+								<h4 id="act-tabla-recaudacion-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-recaudacion"></p>
+							</div>
+							<div class="b"> </div>
+							<!--DETRAS DE CAMARA TV-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="detras-de-camara-tv"></h2>
+								<h4 id="act-tabla-tvcreat-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-tvcreat"></p>
+								<h4 id="act-tabla-tvprod-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-tvprod"></p>
+								<h4 id="act-tabla-tvwrit-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-tvwrit"></p>
+							</div>
+							<div class="b"> </div>
+							<!--OTROS TRABAJOS-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="otros-trabajos"></h2>
+								<h4 id="act-tabla-desc-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-desc"></p>
+								<h4 id="act-tabla-premios-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-premios"></p>
+								<h4 id="act-tabla-clasificacion-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-clasificacion"></p>
+							</div>
+							<div class="b"> </div>
+							<!--PREMIOS-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="premios-ganados"></h2>
+								<h4 id="act-tabla-trailer-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-trailer"></p>
+								<h4 id="act-tabla-writer-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="act-tabla-writer"></p>
+							</div>
+							<!--WEB-->
+							<!--<div class="b"> </div>
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="act-tabla-appe-celda"></h2>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo campo-web" id="act-tabla-appe"></p>
+							</div>-->
+							<!--CAMBIAR IDIOMA-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="act-buscar-imdb" class="pull-right text-right"></h2>
+							</div>
+						</div> 
+					</div> 
+					
+					
+					<div ng-show="tablaPelicula">
+						<!--TABLA PELICULAS-->
+						<div id="tblDataPelicula" class="intro-main col-xs-12 col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
+							<span class="col-xs-12 col-sm-12 col-md-12 random"></span>
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h3 id="tabla-titulo"></h3>
+								<img id="tabla-poster" class="poster" />
+								<h2 class="col-xs-12 col-sm-12 col-md-12 no_image"></h2>
+							</div>
+							<!--GENERAL INFO-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 class="primer_titulo" id="general_info"></h2>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-durac-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-durac"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-anio-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-anio"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-imdb-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-imdb"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-tagline-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-tagline"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-director-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-director"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-idioma-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-idioma"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-exec_productores-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-exec_productores"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-age-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-age"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-guion-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-guion"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-pais-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-pais"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-adapted-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-adapted"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-rating-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-rating"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-generos-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-generos"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-prequel-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-prequel"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="tabla-sequel-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="tabla-sequel"></p>
+							</div>
+							<div class="b"> </div>
+							<!--DESCRIPCION-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="tabla-plotdesc-celda"></h2>
+								<h4 id="tabla-plot-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="tabla-plot"></p>
+								<h4 id="tabla-lanzamiento-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="tabla-lanzamiento"></p>
+							</div>
+							<div class="b"> </div>
+							<!--CAST-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="tabla-causedeath-celda"></h2>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="tabla-causedeath"></p>
+							</div>
+							<div class="b"> </div>
+							<!--PRODUCCION-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="production"></h2>
+								<h4 id="tabla-actores-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="tabla-actores"></p>
+								<h4 id="tabla-productora-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="tabla-productora"></p>
+								<h4 id="tabla-productores-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="tabla-productores"></p>
+							</div>
+							<div class="b"> </div>
+							<!--PREMIOS-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="premios"></h2>
+								<h4 id="tabla-recaudacion-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="tabla-recaudacion"></p>
+								<h4 id="tabla-desc-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="tabla-desc"></p>
+							</div>
+							<div class="b"> </div>
+							<!--WEB-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="website"></h2>
+								<h4 id="tabla-premios-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo campo-web" id="tabla-premios"></p>
+								<!--<h4 id="tabla-clasificacion-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo campo-web" id="tabla-clasificacion"></p>-->
+							</div>
+							<!--CAMBIAR IDIOMA-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="buscar-imdb" class="pull-right text-right"></h2>
+							</div>
+						</div> 
+					</div> 
+
+					
+					<div ng-show="tablaSerie">
+						<!--TABLA SERIES-->
+						<div id="tblDataSerie" class="intro-main col-xs-12 col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
+							<span class="col-xs-12 col-sm-12 col-md-12 random"></span>
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h3 id="ser-tabla-titulo"></h3>
+								<img id="ser-tabla-poster" class="poster" />
+								<h2 class="col-xs-12 col-sm-12 col-md-12 no_image"></h2>
+							</div>
+							<!--GENERAL INFO-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 class="primer_titulo" id="ser-general_info"></h2>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-guion-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-guion"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-adapted-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-adapted"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-imdb-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-imdb"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-durac-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-durac"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-anio-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-anio"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-pais-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-pais"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-rating-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-rating"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-exec_productores-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-exec_productores"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-director-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-director"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-tagline-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-tagline"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-idioma-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-idioma"></p>
+							</div>
+							<div class="b"> </div>
+							<!--DESCRIPCION-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="ser-tabla-plotdesc-celda"></h2>
+								<h4 id="ser-tabla-plot-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="ser-tabla-plot"></p>
+								<h4 id="ser-tabla-lanzamiento-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="ser-tabla-lanzamiento"></p>
+							</div>
+							<div class="b"> </div>
+							<!--CAST-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="ser-tabla-causedeath-celda"></h2>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="ser-tabla-causedeath"></p>
+							</div>
+							<div class="b"> </div>
+							<!--PRODUCCION-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="ser-production"></h2>
+								<h4 id="ser-tabla-actores-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="ser-tabla-actores"></p>
+								<h4 id="ser-tabla-productora-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="ser-tabla-productora"></p>
+							</div>
+							<div class="b"> </div>
+							<!--EPISODIOS-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="ser-episodes"></h2>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="ser-episodes-msg"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-productores-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-productores"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-age-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-age"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-generos-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-generos"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 celda" id="ser-tabla-episod-celda"></p>
+								<p class="col-xs-6 col-sm-6 col-md-6 campo" id="ser-tabla-episod"></p>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="ser-episodes-list"></p>
+							</div>
+							<div class="b"> </div>
+							<!--PREMIOS-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="ser-premios"></h2>
+								<h4 id="ser-tabla-recaudacion-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="ser-tabla-recaudacion"></p>
+								<h4 id="ser-tabla-desc-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="ser-tabla-desc"></p>
+							</div>
+							<!--WEB-->
+							<!--<div class="b"> </div>
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="ser-website"></h2>
+								<h4 id="ser-tabla-premios-celda"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo campo-web" id="ser-tabla-premios"></p>
+							</div>-->
+							<!--CAMBIAR IDIOMA-->
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="ser-buscar-imdb" class="pull-right text-right"></h2>
+							</div>
+						</div> 
+					</div> 
+
+					
+					<div ng-show="tablaLista">
+						<div id="tblDataLista" class="intro-main col-xs-12 col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 tblData">
+							<div class="col-xs-12 col-sm-12 col-md-12 div-lista">
+								<h2 id="resultados_titulo"></h2>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="resultados_lista"></p>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12">
+								<h2 id="list-buscar-imdb" class="pull-right text-right"></h2>
+							</div>
+						</div>
+					</div>
+
+					<div ng-show="tablaOptions">
+						<div id="tblDataOptions" class="intro-main col-xs-12 col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 tblData">
+							<div class="col-xs-12 col-sm-12 col-md-12 div-lista">
+								<h2 id="nycconfig"></h2>
+								<h4 id="idioma"></h4>
+								<select id="language" ng-model="language" onchange="updateConfig()">
+									<option value="en">English</option>
+									<option value="es">Espa&ntilde;ol</option>
+								</select>
+								<h4 id="sinchronize"></h4>
+								<select id="syncData" ng-model="syncData" onchange="updateConfig()">
+									<option id="sync_wr" value="0"></option>
+									<option id="sync_w" value="1"></option>
+									<option value="2">No</option>
+								</select>
+								<span class="col-xs-12 col-sm-12 col-md-12" id="sync_wr_exp"></span>
+								<span ng-show="syncData == 0" class="col-xs-12 col-sm-12 col-md-12" id="sync_wr_msg"></span>
+								<h4 id="show-images"></h4>
+								<select id="mostrarImagen" ng-model="mostrarImagen" onchange="updateConfig()">
+									<option id="img_wr" value="0"></option>
+									<option id="img_w" value="1"></option>
+									<option value="2">No</option>
+								</select>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 notas"  ng-show="language == 'en'">
+								<h2 id="nycnotes">Notes</h2>
+								<p class="col-xs-12 col-sm-12 col-md-12">All the information and images are taken from Freebase, OMDBApi and Wikipedia (Creative Commons License). I do not own the rigths of these and I do not pretend to earn profit of it.</p>
+								<!--<p class="col-xs-12 col-sm-12 col-md-12 notas-img"><img src="images/CC-logo.svg"><img src="images/Freebase-large.jpg"></img></p>-->
+								<p class="col-xs-12 col-sm-12 col-md-12">Lite Movie DB is free and Ad-free and will always be. However, you can always:</p>
+								<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+									<input type="hidden" name="cmd" value="_s-xclick">
+									<input type="hidden" name="hosted_button_id" value="BV82BPFGFRPDQ">
+									<input type="image" src="http://susperreguiprop.com.ar/filmdatabase/images/button-4.png" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+									<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+								</form>
+								<p class="col-xs-12 col-sm-12 col-md-12">Template by <a href="http://w3layouts.com/"> W3layouts </a></p>
+								<p class="col-xs-12 col-sm-12 col-md-12">This app has been developed to provide an experimental implementation of my degree's thesis.</p>
+								<p class="col-xs-12 col-sm-12 col-md-12">Capdevila, Gabriel Eduardo, N°8579/9, Carrera Licenciatura en sistemas, Facultad de Informática, UNLP</p>
+								<!--<p class="col-xs-12 col-sm-12 col-md-12"><a class="link-contacto" href="mailto:capdevilagabriel@gmail.com">Contacto</a></p>-->
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 notas"  ng-show="language == 'es'">
+								<h2 id="nycnotes">Notas</h2>
+								<p class="col-xs-12 col-sm-12 col-md-12">Toda la información e imágenes presentada aquí ha sido extraída de Freebase, OMDBApi y Wikipedia (Creative Commons License). No poseo los derechos de ninguna de éstas y no pretendo obtener ganancias de ellas.</p>
+								<!--<p class="col-xs-12 col-sm-12 col-md-12 notas-img"><img src="images/CC-logo.svg"><img src="images/Freebase-large.jpg"></img></p>-->
+								<p class="col-xs-12 col-sm-12 col-md-12">Lite Movie DB es gratis, no posee publicidades y seguirá siéndolo así. Igualmente, siempre pueden donar:</p>
+								<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+									<input type="hidden" name="cmd" value="_s-xclick">
+									<input type="hidden" name="hosted_button_id" value="BV82BPFGFRPDQ">
+									<input type="image" class="img-paypal" src="http://susperreguiprop.com.ar/filmdatabase/images/button-4.png" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+									<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+								</form>
+								<p class="col-xs-12 col-sm-12 col-md-12">Template by <a href="http://w3layouts.com/"> W3layouts </a></p>
+								<p class="col-xs-12 col-sm-12 col-md-12">Esta aplicaci&oacute;n ha sido desarrollada con el fin de proveer una demostraci&oacute;n pr&aacute;ctica a la tesina de grado.</p>
+								<p class="col-xs-12 col-sm-12 col-md-12">Capdevila, Gabriel Eduardo, N°8579/9, Carrera Licenciatura en sistemas, Facultad de Informática, UNLP</p>
+								<!--<p class="col-xs-12 col-sm-12 col-md-12"><a class="link-contacto" href="mailto:capdevilagabriel@gmail.com">Contacto</a></p>-->
+							</div>
+						</div>
+					</div>
+
+					<div ng-show="tablaHistory">
+						<div id="tblDataHistory" class="intro-main col-xs-12 col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 tblData">
+							<div class="col-xs-12 col-sm-12 col-md-12 div-lista">
+								<h2 id="title-history"></h2>
+								<h4 id="title-history-err"></h4>
+								<p class="col-xs-12 col-sm-12 col-md-12 campo" id="resultados_history"></p>
+							</div>
+						</div>
+					</div>
+					
+					<div ng-show="tablaNothing">
+							<div class="col-xs-12 col-sm-12 col-md-12 nothing intro-main">
+								<h3 id="tabla-nothing"></h3>
+								<h4 id="tabla-nothing2"></h4>
+								<img id="noth-tabla-poster" class="poster">
+							</div>						
+					</div>
+					
+					<div ng-show="carga">
+						<img class="imagen-carga" src="images/ajax-loader.gif">
+					</div>
+
+					<div class="fondo-carga"></div>
+					
+					<a id="showPelicula" ng-click="showTablaPelicula();removeTablaActor();removeTablaSerie();removeTablaLista();removeTablaCarga();removeTablaOptions();removeTablaHistory();removeTablaNothing();"></a>
+					<a id="showActor" ng-click="removeTablaPelicula();showTablaActor();removeTablaSerie();removeTablaLista();removeTablaCarga();removeTablaOptions();removeTablaHistory();removeTablaNothing();"></a>
+					<a id="showSerie" ng-click="removeTablaPelicula();removeTablaActor();showTablaSerie();removeTablaLista();removeTablaCarga();removeTablaOptions();removeTablaHistory();removeTablaNothing();"></a>
+					<a id="showLista" ng-click="removeTablaPelicula();removeTablaActor();removeTablaSerie();showTablaLista();removeTablaCarga();removeTablaOptions();removeTablaHistory();removeTablaNothing();"></a>
+					<a id="showCarga" ng-click="removeTablaPelicula();removeTablaActor();removeTablaSerie();removeTablaLista();showTablaCarga();removeTablaOptions();removeTablaHistory();removeTablaNothing();"></a>
+					<a id="showOptions" ng-click="removeTablaPelicula();removeTablaActor();removeTablaSerie();removeTablaLista();removeTablaCarga();showTablaOptions();removeTablaHistory();removeTablaNothing();"></a>
+					<a id="showHistory" ng-click="removeTablaPelicula();removeTablaActor();removeTablaSerie();removeTablaLista();removeTablaCarga();removeTablaOptions();showTablaHistory();removeTablaNothing();"></a>
+					<a id="showNothing" ng-click="removeTablaPelicula();removeTablaActor();removeTablaSerie();removeTablaLista();removeTablaCarga();removeTablaOptions();removeTablaHistory();showTablaNothing();"></a>
+
+					<div class="clear"> </div>	 					
+				</div>
+			</div>
+
+
+			<div id="navmenutop">    			  
+				<div id="opt_menu">    			  
+					<a href="#" id="opt_menu_home" class="opt_menu">Home</a>
+					<a id="nyc" href="#" onclick="slide_menu();$('#showOptions').click();" class="opt_menu"></a>
+					<a id="histo" href="#" onclick="slide_menu();showHistory();" class="opt_menu"></a>
+				</div>  
+				<div class="b"> </div>
+				<div id="navmenu"></div>  
+			</div>  
+		</div>
+	</body>	
+
+	<script type="text/javascript">
+		function slideOut_menu() {	
+				$('.fondo-carga').css('display','none');
+				$('#navmenutop').animate({right: "-300px"});			
+		}
+	</script>
+	<script type="text/javascript">
+		function slide_menu() {	
+			var rigth_pos_menu = $(window).width() - ($('#navmenutop').offset().left + $('#navmenutop').outerWidth());
+			if (rigth_pos_menu < 0){
+				$(".header-bottom").css('display','none');
+				$('.menu-search').css('display','initial');
+				var top_menu = ($('.header').height() * 100) / $(window).height();
+				var height_menu = 100 - top_menu;
+				$("#navmenutop").css('top',top_menu+'%');
+				$("#navmenutop").css('min-height',height_menu+'%');
+				$("#navmenutop").css('max-height',height_menu+'%');
+				$('#navmenutop').animate({right: "0px"});
+				$('.intro_blank').height($('.header').height());
+				$('.fondo-carga').css('display','initial');
+				$('.fondo-carga').click(function() {
+					slide_menu();
+				});				
+				$('.fondo-carga').on("tap",function() {
+					slide_menu();
+				});				
+			}else{
+				$('.fondo-carga').css('display','none');
+				$('#navmenutop').animate({right: "-300px"});			
+			}
+		}
+	</script>
+	<script type="text/javascript">
+		document.addEventListener('deviceready', function() {
+			var exitApp = false, intval = setInterval(function (){exitApp = false;}, 1000);
+			document.addEventListener("backbutton", function (e){
+				e.preventDefault();
+				if (exitApp) {
+					clearInterval(intval)
+					(navigator.app && navigator.app.exitApp()) || (device && device.exitApp());
+				}
+				else {
+					exitApp = true;
+					showToastr();
+					goBack();
+				} 
+			}, false);
+		}, false);
+	</script>
+	<script type="text/javascript">
+		document.addEventListener('deviceready', function() {
+			document.addEventListener("menubutton", slide_menu, false);
+		}, false);
+	</script>
+	<script type="text/javascript">
+		function showToastr() {
+			toastr.options = {
+			  "closeButton": false,
+			  "debug": false,
+			  "newestOnTop": false,
+			  "progressBar": false,
+			  "positionClass": "toast-bottom-center",
+			  "preventDuplicates": true,
+			  "onclick": null,
+			  "showDuration": "300",
+			  "hideDuration": "0",
+			  "timeOut": "5000",
+			  "extendedTimeOut": "1000",
+			  "showEasing": "swing",
+			  "hideEasing": "linear",
+			  "showMethod": "fadeIn",
+			  "hideMethod": "fadeOut"
+			};
+			toastr.info(getTag(lang, 'exit'));
+        }
+	</script>
+</html>
